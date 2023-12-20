@@ -14,27 +14,64 @@ const DrawingBoard = () => {
     setDimensions({ width: window.innerWidth, height: window.innerHeight });
   }, []);
 
-  const handleMouseDown = (e) => {
+  const handleStartDrawing = (pos) => {
     isDrawing.current = true;
-    const pos = e.target.getStage().getPointerPosition();
     setLines([...lines, { tool, points: [pos.x, pos.y], color, size }]);
   };
 
-  const handleMouseMove = (e) => {
+  const handleDrawing = (point) => {
     if (!isDrawing.current) {
       return;
     }
-    const stage = e.target.getStage();
-    const point = stage.getPointerPosition();
     let lastLine = lines[lines.length - 1];
     lastLine.points = lastLine.points.concat([point.x, point.y]);
-
     lines.splice(lines.length - 1, 1, lastLine);
     setLines(lines.concat());
   };
 
-  const handleMouseUp = () => {
+  const handleStopDrawing = () => {
     isDrawing.current = false;
+  };
+
+  const handleMouseDown = (e) => {
+    const pos = e.target.getStage().getPointerPosition();
+    handleStartDrawing(pos);
+  };
+
+  const handleMouseMove = (e) => {
+    const point = e.target.getStage().getPointerPosition();
+    handleDrawing(point);
+  };
+
+  const handleMouseUp = () => {
+    handleStopDrawing();
+  };
+
+  const handleTouchStart = (e) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const stage = e.target.getStage();
+    const pos = {
+      x: touch.clientX - stage.x(),
+      y: touch.clientY - stage.y()
+    };
+    handleStartDrawing(pos);
+  };
+
+  const handleTouchMove = (e) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const stage = e.target.getStage();
+    const point = {
+      x: touch.clientX - stage.x(),
+      y: touch.clientY - stage.y()
+    };
+    handleDrawing(point);
+  };
+
+  const handleTouchEnd = (e) => {
+    e.preventDefault();
+    handleStopDrawing();
   };
 
   return (
@@ -43,8 +80,11 @@ const DrawingBoard = () => {
         width={dimensions.width}
         height={dimensions.height}
         onMouseDown={handleMouseDown}
-        onMousemove={handleMouseMove}
-        onMouseup={handleMouseUp}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         <Layer>
           {lines.map((line, i) => (
