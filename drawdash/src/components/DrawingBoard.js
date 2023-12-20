@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Stage, Layer, Line } from 'react-konva';
 
 const DrawingBoard = () => {
@@ -7,6 +7,31 @@ const DrawingBoard = () => {
   const [color, setColor] = useState('#000000');
   const [size, setSize] = useState(5);
   const isDrawing = useRef(false);
+
+  useEffect(() => {
+    // Disable scrolling when touching the canvas
+    const canvasElement = document.getElementById('canvas-container');
+    if (canvasElement) {
+      canvasElement.addEventListener('touchstart', handleTouchStart, {
+        passive: false
+      });
+      canvasElement.addEventListener('touchmove', handleTouchMove, {
+        passive: false
+      });
+      canvasElement.addEventListener('touchend', handleTouchEnd, {
+        passive: false
+      });
+    }
+
+    return () => {
+      // Clean up event listeners
+      if (canvasElement) {
+        canvasElement.removeEventListener('touchstart', handleTouchStart);
+        canvasElement.removeEventListener('touchmove', handleTouchMove);
+        canvasElement.removeEventListener('touchend', handleTouchEnd);
+      }
+    };
+  }, []);
 
   // Fixed canvas dimensions
   const canvasWidth = 800; // Adjust the width as needed
