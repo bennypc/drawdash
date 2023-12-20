@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { Stage, Layer, Line } from 'react-konva';
 
 const DrawingBoard = () => {
@@ -6,13 +6,11 @@ const DrawingBoard = () => {
   const [lines, setLines] = useState([]);
   const [color, setColor] = useState('#000000');
   const [size, setSize] = useState(5);
-  const [dimensions, setDimensions] = useState({ width: 500, height: 500 }); // Default dimensions
   const isDrawing = useRef(false);
 
-  useEffect(() => {
-    // Update the dimensions after the component mounts
-    setDimensions({ width: window.innerWidth, height: window.innerHeight });
-  }, []);
+  // Fixed canvas dimensions
+  const canvasWidth = 800; // Adjust the width as needed
+  const canvasHeight = 600; // Adjust the height as needed
 
   const handleStartDrawing = (pos) => {
     isDrawing.current = true;
@@ -77,8 +75,8 @@ const DrawingBoard = () => {
   return (
     <div>
       <Stage
-        width={dimensions.width}
-        height={dimensions.height}
+        width={canvasWidth}
+        height={canvasHeight}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
