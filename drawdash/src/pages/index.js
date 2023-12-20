@@ -1,4 +1,9 @@
-import DrawingBoard from '@/components/DrawingBoard';
+// pages/index.js
+import dynamic from 'next/dynamic';
+
+const DrawingBoard = dynamic(() => import('@/components/DrawingBoard'), {
+  ssr: false
+});
 
 export default function Home() {
   return (
